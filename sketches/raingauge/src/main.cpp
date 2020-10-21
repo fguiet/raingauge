@@ -66,14 +66,14 @@ const lmic_pinmap lmic_pins = {
 #define DEBUG 0
 
 const String FIRMWARE_VERSION= "1.0";
-const String SENSOR_ID= "22";
+const String SENSOR_ID= "17";
 
 const int REED_SWITCH_PIN = 2;
 const int BATTERY_ANALOG_PIN = A0;
 volatile bool wakeUpByFlipFlop = false;
 const long DEBOUNCING_TIME = 1000; //Debouncing Time in Milliseconds 
 volatile unsigned long last_micros;
-const unsigned TX_INTERVAL = 60*60; //Trasnmit at least every hour
+const unsigned TX_INTERVAL = 30*60; //Trasnmit at least every 1/2 hour
 bool messageSent = true;
 char buff[30];
 
@@ -99,11 +99,12 @@ float ReadVoltage() {
   //So outputvoltage is 1.1v (analog ref) when battery is 4.2v
   unsigned int sensorValue = analogRead(BATTERY_ANALOG_PIN);
 
-  //Reading sensorValue is 1000 when battery is around 4.14v
+  //Reading sensorValue is 810 when battery is around 4.2v
 
-  //Serial.println(sensorValue);
+  if (DEBUG)
+    Serial.println(sensorValue);
 
-  return (sensorValue * 4.14) / 1000;
+  return (sensorValue * 4.2) / 810;
 }
 
 void debug_message(String message, bool doReturnLine) {
