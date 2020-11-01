@@ -1,4 +1,4 @@
-# Solar powered, waterproof, LoRa enabled raingauge
+# Solar powered, waterproof, LoRaWAN enabled raingauge
 
 ## Foreword
 
@@ -9,7 +9,8 @@ You can find the mark II 3D model here : <https://www.thingiverse.com/thing:2853
 This one is:
 
 * waterproof
-* LoRa enabled
+* LoRaWAN enabled 
+* Solar powered
 * Totally 3D printed with `CR10s Creality`
 
 Below funnel while being printed
