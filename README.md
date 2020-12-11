@@ -25,7 +25,7 @@ The bucket assembly tips and activates a magnetic reed switch. The sample is dis
 
 This raingauge is equiped with a 15 cm diameter funnel collector.
 
-Each bucket contains about 1.6 ml of water (ie 1.6cm3).
+Each bucket contains about 1.8 ml of water (ie 1.8cm3).
 
 Let's compute how much water has fallen when the bucket tips:
 
@@ -35,8 +35,10 @@ H : heigth of water in millimeter
 V : volume of water per bucket in cm3
 A : funnel collecting area in cm2
 
-H = 1.6 / (pi * 7.5^2)
-H = 0,00905 cm = 0,0905 mm / tip
+H = 1.8 / (pi * 7.5^2)
+
+0,0102
+H = 0,0102 cm = 0,102 mm / tip
 
 About 0.1 mm / tip, so it quiet accurate...
 
@@ -52,7 +54,7 @@ To make this project, you'll need:
 * [Arduino Pro Mini 3.3v](https://www.aliexpress.com/item/32672852945.html?spm=a2g0s.9042311.0.0.27424c4dh7WlyZ)
 * [LoRa RFM95 868Mhz module](https://www.aliexpress.com/item/32817685871.html?spm=a2g0o.productlist.0.0.554d3685gCSILO&algo_pvid=76c14e05-7b66-4f08-b3e8-dec80086132e&algo_expid=76c14e05-7b66-4f08-b3e8-dec80086132e-0&btsid=2100bb4916042366878406560e9db8&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_)
 * Wire antenna of 8.2cm (See <https://learn.adafruit.com/adafruit-feather-m0-radio-with-lora-radio-module/antenna-options>)
-* [TP4056 (Lithium Battery Charger Module)](https://www.aliexpress.com/item/32797834680.html?spm=a2g0o.productlist.0.0.29ee75096TX773&algo_pvid=e6187ecb-803c-435b-9056-2e0f760d53b8&algo_expid=e6187ecb-803c-435b-9056-2e0f760d53b8-0&btsid=2100bdde16042369809963715e7931&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_)
+* Update 2020/12/11 : Change TP4056 model from [this one](https://fr.aliexpress.com/item/32705078422.html) to [this one](https://components101.com/tp4056a-li-ion-battery-chargingdischarging-module). This new model includes a over-discharge protection.
 * [Solar panel (11cm x 6cm)](https://www.aliexpress.com/item/4001226159917.html?spm=a2g0o.productlist.0.0.79c12cd9WfbBvi&algo_pvid=3dd3dc3c-4313-4cef-8e06-cd81e0430700&algo_expid=3dd3dc3c-4313-4cef-8e06-cd81e0430700-5&btsid=2100bdf016042369306381454e450d&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_)
 * One neodynium magnet (8mm diameter)
 * Some resistors (see datashet)
