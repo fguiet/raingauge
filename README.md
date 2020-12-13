@@ -25,7 +25,7 @@ The bucket assembly tips and activates a magnetic reed switch. The sample is dis
 
 This raingauge is equiped with a 15 cm diameter funnel collector.
 
-Each bucket contains about 1.8 ml of water (ie 1.8cm3).
+Each bucket contains about 2 ml of water (ie 2cm3).
 
 Let's compute how much water has fallen when the bucket tips:
 
@@ -35,10 +35,9 @@ H : heigth of water in millimeter
 V : volume of water per bucket in cm3
 A : funnel collecting area in cm2
 
-H = 1.8 / (pi * 7.5^2)
+H = 2 / (pi * 7.5^2)
 
-0,0102
-H = 0,0102 cm = 0,102 mm / tip
+H = 0,011317 cm = 0,11317 mm / tip
 
 About 0.1 mm / tip, so it quiet accurate...
 
@@ -68,6 +67,13 @@ Available here : <https://easyeda.com/fguiet/raingauge_lorawan>
 ## 3D model
 
 You can download the 3D model for free here : <https://www.thingiverse.com/thing:4632846>
+
+**Print settings**
+
+* PLA
+* 0.2 mm (0.1 mm for the tipping bucket)
+
+Apply some nail polish on funnel and tipping bucket to avoid water surface tension as much as possible.
 
 I included a mount system that fits on H pole like this one : 
 
