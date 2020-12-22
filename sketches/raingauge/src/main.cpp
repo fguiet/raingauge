@@ -3,8 +3,21 @@ Raingauge
 
     * Author :             F. Guiet 
     * Creation           : 20201004
-    * Last modification  :   
-    * History            : 1.0 - First version                       
+    * Last modification  : 20201222      
+    * History            : 1.0 - First version
+                           1.1 - Change resistor values to operate with built-in reference (INTERNAL ADC) of 1.1v , chane the way interrupt is handled ... sometime it was sending messages 2 times  
+                          
+                          Sample of message sent two times...
+
+                          wakeUpByFlipFlop was reset to true when while message was sent...dunno why because I put a debounce of 1 s...
+
+                          2020-12-21T08:37:08.913Z 1        3.309999942779541
+                          2020-12-21T08:37:19.968Z 1        4.210000038146973
+
+                          2020-12-21T08:55:20.273Z 1        4.199999809265137
+                          2020-12-21T08:55:31.336Z 1        4.199999809265137
+
+                    
                   
     * Tips ! :
       - Change baudrate in PlatformIO : Ctrl+T b 115200
@@ -65,7 +78,7 @@ const lmic_pinmap lmic_pins = {
 
 #define DEBUG 0
 
-const String FIRMWARE_VERSION= "1.0";
+const String FIRMWARE_VERSION= "1.1";
 const String SENSOR_ID= "17";
 
 const int REED_SWITCH_PIN = 2;
@@ -73,16 +86,16 @@ const int BATTERY_ANALOG_PIN = A0;
 volatile bool wakeUpByFlipFlop = false;
 const long DEBOUNCING_TIME = 1000; //Debouncing Time in Milliseconds 
 volatile unsigned long last_micros;
-const unsigned TX_INTERVAL = 30*60; //Trasnmit at least every 1/2 hour
+const unsigned TX_INTERVAL = 30*60; //Transnmit at least every 1/2 hour
 bool messageSent = true;
 char buff[30];
 
 void OnRainfall() {
-   // Interrupt service routine or ISR  
-  if((long)(micros() - last_micros) >= DEBOUNCING_TIME * 1000) {
-    wakeUpByFlipFlop = true;
-    last_micros = micros();
-  }  
+  // Interrupt service routine or ISR  
+  //if((long)(micros() - last_micros) >= DEBOUNCING_TIME * 1000) {
+  wakeUpByFlipFlop = true;
+  //  last_micros = micros();
+  //}  
 }
 
 void blink(unsigned long ms) {
@@ -92,19 +105,36 @@ void blink(unsigned long ms) {
   delay(ms);
 }
 
+void burn8Readings(int pin)
+{
+  for (int i = 0; i < 8; i++)
+  {
+    analogRead(pin);
+    delay(2);
+  }
+}
+
 float ReadVoltage() {
 
-  //R1 = 43 kOhm
-  //R2 = 15 kOhm
-  //So outputvoltage is 1.1v (analog ref) when battery is 4.2v
-  unsigned int sensorValue = analogRead(BATTERY_ANALOG_PIN);
+  analogReference(INTERNAL);    // set the ADC reference to 1.1V
+  burn8Readings(BATTERY_ANALOG_PIN);            // make 8 readings but don't use them
+  delay(10);                    // idle some time
+  unsigned int sensorValue = analogRead(BATTERY_ANALOG_PIN);    // read actual value
 
-  //Reading sensorValue is 810 when battery is around 4.2v
+  //with R1 = 51kOhm, R2 = 15kOhm
+  //Max voltage 4.2v of fully charged battery produces = 0.95v on A0
+
+  //with R1 = 43kOhm, R2 = 15kOhm
+  //Max voltage 4.2v of fully charged battery produces = 1.0862068965517242v on A0
+
+  //According to voltage divider formula : Vout = Vin * (R2 / (R1 + R2))
+
+  //So 4.2v is roughly represented by 1023 value on A0
 
   if (DEBUG)
     Serial.println(sensorValue);
 
-  return (sensorValue * 4.2) / 810;
+  return (sensorValue * 4.2) / 1023;
 }
 
 void debug_message(String message, bool doReturnLine) {
@@ -120,11 +150,17 @@ void debug_message(String message, bool doReturnLine) {
 }
 
 void Hibernate()         // here arduino is put to sleep/hibernation
-{
-  extern volatile unsigned long timer0_overflow_count;
+{  
+  //Attach Interrupt
+  //attachInterrupt(digitalPinToInterrupt(REED_SWITCH_PIN),OnRainfall, FALLING);
+
+  //extern volatile unsigned long timer0_overflow_count;
 
   int sleepcycles = TX_INTERVAL / 8;  // calculate the number of sleepcycles (8s) given the TX_INTERVAL
   
+  //Reset boolean  
+  wakeUpByFlipFlop = false;
+
   for (int i=1; i<=sleepcycles;i++) {
     
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);      
@@ -133,11 +169,12 @@ void Hibernate()         // here arduino is put to sleep/hibernation
       //Not what if does...but...
       // LMIC uses micros() to keep track of the duty cycle, so
       // hack timer0_overflow for a rude adjustment:
-      cli();
-      timer0_overflow_count+= 8 * 64 * clockCyclesPerMicrosecond();
-      sei();
+      //cli();
+      //timer0_overflow_count+= 8 * 64 * clockCyclesPerMicrosecond();
+      //sei();
     
       if (wakeUpByFlipFlop) { 
+        //detachInterrupt(digitalPinToInterrupt(REED_SWITCH_PIN));
         debug_message("wakeUpByFlipFlop : TRUE", true);        
         break;
       }
@@ -335,7 +372,7 @@ void setup() {
 
   setup_lorawan_system();
 
-  analogReference(INTERNAL);
+  //analogReference(INTERNAL);
 
   pinMode(REED_SWITCH_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(REED_SWITCH_PIN),OnRainfall, FALLING);
@@ -427,7 +464,7 @@ void loop() {
     //blink(200);
 
     //Reset boolean    
-    wakeUpByFlipFlop = false;    
+    //wakeUpByFlipFlop = false;    
     
   } else {
     //Woke up because one hour has passed....
