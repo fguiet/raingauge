@@ -10,6 +10,7 @@ Raingauge
                           Sample of message sent two times...
 
                           wakeUpByFlipFlop was reset to true when while message was sent...dunno why because I put a debounce of 1 s...
+                          I think the pb is because micros() is used by LMIC library ... so debounce must not work properly...
 
                           2020-12-21T08:37:08.913Z 1        3.309999942779541
                           2020-12-21T08:37:19.968Z 1        4.210000038146973
@@ -92,6 +93,7 @@ char buff[30];
 
 void OnRainfall() {
   // Interrupt service routine or ISR  
+  // Do not use debounce anymore...not working properly...because of LMIC library??
   //if((long)(micros() - last_micros) >= DEBOUNCING_TIME * 1000) {
   wakeUpByFlipFlop = true;
   //  last_micros = micros();
@@ -121,20 +123,23 @@ float ReadVoltage() {
   delay(10);                    // idle some time
   unsigned int sensorValue = analogRead(BATTERY_ANALOG_PIN);    // read actual value
 
-  //with R1 = 51kOhm, R2 = 15kOhm
-  //Max voltage 4.2v of fully charged battery produces = 0.95v on A0
-
   //with R1 = 43kOhm, R2 = 15kOhm
   //Max voltage 4.2v of fully charged battery produces = 1.0862068965517242v on A0
-
   //According to voltage divider formula : Vout = Vin * (R2 / (R1 + R2))
 
   //So 4.2v is roughly represented by 1023 value on A0
 
-  if (DEBUG)
-    Serial.println(sensorValue);
+  //This live experience shows 1013 for full charged lithium battery (4.2v)
+  //So 4.2v is roughly represented by 1013 value on A0 (we are closed to the theoric 1023 :))
 
-  return (sensorValue * 4.2) / 1023;
+  float voltage = (sensorValue * 4.2) / 1013;
+
+  if (DEBUG) {
+    Serial.println(sensorValue);
+    Serial.println("Battery voltage is : " + String(voltage,2));
+  }
+
+  return voltage;
 }
 
 void debug_message(String message, bool doReturnLine) {
@@ -154,7 +159,7 @@ void Hibernate()         // here arduino is put to sleep/hibernation
   //Attach Interrupt
   //attachInterrupt(digitalPinToInterrupt(REED_SWITCH_PIN),OnRainfall, FALLING);
 
-  //extern volatile unsigned long timer0_overflow_count;
+  extern volatile unsigned long timer0_overflow_count;
 
   int sleepcycles = TX_INTERVAL / 8;  // calculate the number of sleepcycles (8s) given the TX_INTERVAL
   
@@ -165,13 +170,17 @@ void Hibernate()         // here arduino is put to sleep/hibernation
     
       LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);      
 
+      //
+      // 2020/12/22 : Don't delete that!!! it makes LMIC works a lot better !!! message are sent quickly!!!
+      // without that message are sent but it is very slow!!!
+      //
       ///See https://github.com/henri98/LoRaWAN-Weather-Station/blob/master/src/main.cpp
       //Not what if does...but...
       // LMIC uses micros() to keep track of the duty cycle, so
-      // hack timer0_overflow for a rude adjustment:
-      //cli();
-      //timer0_overflow_count+= 8 * 64 * clockCyclesPerMicrosecond();
-      //sei();
+      // hack timer0_overflow for a rude adjustment:      
+      cli();
+      timer0_overflow_count+= 8 * 64 * clockCyclesPerMicrosecond();
+      sei();
     
       if (wakeUpByFlipFlop) { 
         //detachInterrupt(digitalPinToInterrupt(REED_SWITCH_PIN));
@@ -377,12 +386,12 @@ void setup() {
   pinMode(REED_SWITCH_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(REED_SWITCH_PIN),OnRainfall, FALLING);
    
-  debug_message("Setup completed successfully...Starting main loop now !", true);
+  debug_message(F("Setup completed successfully...Starting main loop now !"), true);
 }
 
 void sendMessage(bool wakeUpByFlipFlop) {
 
-  float voltage = ReadVoltage();
+  float voltage = ReadVoltage();   
 
   //Reset buffer
   memset(buff, '\0', sizeof(buff));
