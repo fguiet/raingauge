@@ -162,7 +162,7 @@ void Hibernate()         // here arduino is put to sleep/hibernation
   extern volatile unsigned long timer0_overflow_count;
 
   int sleepcycles = TX_INTERVAL / 8;  // calculate the number of sleepcycles (8s) given the TX_INTERVAL
-  
+
   //Reset boolean  
   wakeUpByFlipFlop = false;
 
@@ -184,7 +184,7 @@ void Hibernate()         // here arduino is put to sleep/hibernation
     
       if (wakeUpByFlipFlop) { 
         //detachInterrupt(digitalPinToInterrupt(REED_SWITCH_PIN));
-        debug_message("wakeUpByFlipFlop : TRUE", true);        
+        debug_message(F("wakeUpByFlipFlop : TRUE"), true);        
         break;
       }
   }  
@@ -272,7 +272,7 @@ void setup_lorawan_system() {
 
 void onEvent (ev_t ev) {
     debug_message(String(os_getTime()), false);
-    debug_message(": ", false);
+    debug_message(F(": "), false);
     //Serial.print(os_getTime());
     //Serial.print(": ");
     switch(ev) {
@@ -314,8 +314,11 @@ void onEvent (ev_t ev) {
             break;
         case EV_TXCOMPLETE:
             debug_message(F("EV_TXCOMPLETE (includes waiting for RX windows)"), true);
-            debug_message("Time is : ", false);   
-            Serial.println(millis());
+            debug_message(F("Time is : "), false); 
+
+            if (DEBUG)  
+              Serial.println(millis());
+
             //Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
             if (LMIC.txrxFlags & TXRX_ACK)
               debug_message(F("Received ack"), true);
@@ -346,7 +349,7 @@ void onEvent (ev_t ev) {
             //Serial.println(F("EV_RXCOMPLETE"));
             break;
         case EV_LINK_DEAD:
-            debug_message("EV_LINK_DEAD", true);
+            debug_message(F("EV_LINK_DEAD"), true);
             //Serial.println(F("EV_LINK_DEAD"));
             break;
         case EV_LINK_ALIVE:
@@ -442,28 +445,29 @@ void loop() {
   //First time consider message is sent
   if (!messageSent) { 
 
+    debug_message(F("Waiting message to be sent..."), true);
     //Waiting for EV_TXCOMPLETE event
     os_runloop_once();      
     return;  
   }
 
   if (wakeUpByFlipFlop) {
-    debug_message("wakeUpByFlipFlop : TRUE", true);
+    debug_message(F("wakeUpByFlipFlop : TRUE"), true);
   }
   else
   {
-    debug_message("wakeUpByFlipFlop : FALSE", true);
+    debug_message(F("wakeUpByFlipFlop : FALSE"), true);
   }
   
   //Needed something is expected on serial port..
   if (DEBUG)
     delay(1000);
 
-  debug_message("Hibernating...", true);
+  debug_message(F("Hibernating..."), true);
 
   Hibernate();
 
-  debug_message("Alive !", true);
+  debug_message(F("Alive !"), true);
   
   if (wakeUpByFlipFlop) {
     //Send LoRA message
@@ -481,8 +485,3 @@ void loop() {
     sendMessage(false);
   }
 }
-
-
-
-
-
