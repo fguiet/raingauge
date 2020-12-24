@@ -39,6 +39,8 @@ H = 2 / (pi * 7.5^2)
 
 H = 0,011317 cm = 0,11317 mm / tip
 
+H = 0,01075 cm = 0.1075 mm / tip (for a 1.9 ml bucket instead of 2 ml)
+
 About 0.1 mm / tip, so it quiet accurate...
 
 Power consumption according to my Current ranger : 1542uA when sleeping (with power led on), 4,8mA when sending LoRa message
@@ -106,3 +108,7 @@ If needed, I can provide the 3d model solar panel holder
 * Battery voltage monitoring chart
 
 ![Battery voltage monitoring chart](images/battery_voltage.jpg)
+
+## References
+
+* French weather forecast website : <https://www.pleinchamp.com/>

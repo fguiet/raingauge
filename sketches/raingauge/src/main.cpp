@@ -85,7 +85,7 @@ const String SENSOR_ID= "17";
 const int REED_SWITCH_PIN = 2;
 const int BATTERY_ANALOG_PIN = A0;
 volatile bool wakeUpByFlipFlop = false;
-const long DEBOUNCING_TIME = 1000; //Debouncing Time in Milliseconds 
+//const long DEBOUNCING_TIME = 1000; //Debouncing Time in Milliseconds 
 volatile unsigned long last_micros;
 const unsigned TX_INTERVAL = 30*60; //Transnmit at least every 1/2 hour
 bool messageSent = true;
