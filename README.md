@@ -21,6 +21,25 @@ Below funnel while being printed
 
 The bucket assembly tips and activates a magnetic reed switch. The sample is discharged through the base of the gauge. A momentary electrical contact is provided for each increment of rainfall. The contact closure is used to trigger an event counter or data acquisition system.
 
+In my case, data are sent using LoraWAN network protocol and received on my own LoraWAN gateway. 
+
+As soon as a message is received on my [RAK7244 LoraWAN gateway](https://docs.rakwireless.com/Product-Categories/WisGate/RAK7244/Datasheet/), it is transmitted to the [Things Network](https://console.thethingsnetwork.org/) (a global community building an open-source and decentralized LoRaWAN network) and to my MQTT server. If interested, on that part of my infrastructure, see my Github on the subject [Rak2245-LoRa-Gateway](https://github.com/fguiet/rak2245-lora-gateway)
+
+## The Thing Network
+
+To received the message sent by the raingauge on [Things Network](https://console.thethingsnetwork.org/), it is quite easy. You just have to register your LoraWAN Gateway and add an application on the Thinks Network website (refers to the Thinks Network website for more information).
+
+Once your application has been set up on the Things Network, the payload can be decoded using the custom decoder function below :
+
+```javascript
+function Decoder(bytes, port) {
+  // Decode plain text; for testing only 
+  return {
+      myTestValue: String.fromCharCode.apply(null, bytes)
+  };
+}
+```
+
 ## Specifications
 
 This raingauge is equiped with a 15 cm diameter funnel collector.
