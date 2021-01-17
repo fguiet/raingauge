@@ -64,6 +64,9 @@ About 0.1 mm / tip, so it quiet accurate...
 
 Power consumption according to my Current ranger : 1542uA when sleeping (with power led on), 4,8mA when sending LoRa message
 
+**Power consumption :**
+  *  according to my Current ranger : 1542uA when sleeping (with power led on), 4,8mA when sending LoRa message
+
 ## Bill of materials (BOM)
 
 To make this project, you'll need:
