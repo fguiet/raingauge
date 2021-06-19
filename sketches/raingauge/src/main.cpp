@@ -98,7 +98,7 @@ void OnRainfall() {
   wakeUpByFlipFlop = true;
   //  last_micros = micros();
   //}  
-}
+} 
 
 void blink(unsigned long ms) {
   digitalWrite(LED_BUILTIN, HIGH);
@@ -371,8 +371,9 @@ void do_send(osjob_t* j){
     } else {        
         // Prepare upstream data transmission at the next possible time.        
         //strlen() searches for that NULL character and counts the number of memory address passed, So it actually counts the number of elements present in the string before the NULL character, here which is 8.
-        LMIC_setTxData2(1, buff, strlen(buff), 0);
-        debug_message(F("Packet queued"), true);                
+        debug_message(F("Packet is going to be queued"), true);
+        LMIC_setTxData2(1, buff, strlen(buff), 0); 
+        debug_message(F("Packet queued"), true);                       
     }
     // Next TX is scheduled after TX_COMPLETE event.
 }
@@ -382,7 +383,7 @@ void setup() {
   if (DEBUG)
     Serial.begin(9600);
 
-  setup_lorawan_system();
+  setup_lorawan_system(); 
 
   //analogReference(INTERNAL);
 
