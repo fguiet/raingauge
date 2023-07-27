@@ -135,3 +135,4 @@ If needed, I can provide the 3d model solar panel holder
 
 * French weather forecast website : <https://www.pleinchamp.com/>
 * [Calibrating low-cost rain gauge sensors for their applications in IoT infrastructures to densify environmental monitoring networks](https://gi.copernicus.org/preprints/gi-2023-7/)
+* [DIY 3D Printed Rain Gauge Connects To Home Assistant](https://hackaday.com/2023/05/30/diy-3d-printed-rain-gauge-connects-to-home-assistant/)
