@@ -134,3 +134,4 @@ If needed, I can provide the 3d model solar panel holder
 ## References
 
 * French weather forecast website : <https://www.pleinchamp.com/>
+* [Calibrating low-cost rain gauge sensors for their applications in IoT infrastructures to densify environmental monitoring networks](https://gi.copernicus.org/preprints/gi-2023-7/)
